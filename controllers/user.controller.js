@@ -7,6 +7,7 @@ const User = require("../models");
 const logger = require("../service/logger.service");
 module.exports.get = async (req, res) => {
   try {
+    logger.info("successful");
     const user = await User.findById(req.params.id);
     return res.send(user);
   } catch (e) {
@@ -16,6 +17,7 @@ module.exports.get = async (req, res) => {
 };
 module.exports.getAll = async (req, res) => {
   try {
+    logger.info("successful");
     const users = await User.find();
     return res.send(users);
   } catch (e) {
@@ -26,6 +28,7 @@ module.exports.getAll = async (req, res) => {
 
 module.exports.login = async (req, res) => {
   try {
+    logger.info("successful");
     const { email, password } = req.body;
     const user = await User.findOne({
       where: { email: email },
@@ -40,8 +43,13 @@ module.exports.login = async (req, res) => {
         message: "Invalid Password!",
       });
     }
+    const token = jwt.sign({ id: user.id }, secretKey, {
+      expiresIn: 86400,
+    });
+    return res
+      .status(200)
+      .send({ message: "Logged in successfully", user, token });
 
-    return res.status(200).send({ message: "success" });
     // } else if (!user) {
     //   res.send({ message: "failed to login" });
     // }
@@ -57,6 +65,7 @@ module.exports.login = async (req, res) => {
 
 module.exports.signup = async (req, res) => {
   try {
+    logger.info("successful");
     user = new User({
       ...req.body,
       password: bcrypt.hashSync(req.body.password, secretKey),
@@ -74,6 +83,7 @@ module.exports.signup = async (req, res) => {
 
 module.exports.update = async (req, res) => {
   try {
+    logger.info("successful");
     const user = await User.findByIdAndUpdate(req.params.id, req.body);
     return res.send(user);
   } catch (e) {
@@ -83,6 +93,7 @@ module.exports.update = async (req, res) => {
 };
 module.exports.validateLogin = async (req, res, next) => {
   try {
+    logger.info("successful");
     const { email, password } = req.body;
     if (!email) {
       return res.status(400).send({ message: "invalid email" });
@@ -97,6 +108,7 @@ module.exports.validateLogin = async (req, res, next) => {
 };
 module.exports.validate = async (req, res, next) => {
   try {
+    logger.info("successful");
     const { email, password, username } = req.body;
     if (!email || email.length < 5) {
       return res.status(400).send({ message: "invalid email" });

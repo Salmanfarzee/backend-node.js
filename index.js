@@ -1,6 +1,7 @@
 const express = require("express");
 require("./models");
 const routes = require("./routes");
+const auth = require("./auth");
 
 const app = express();
 
@@ -19,7 +20,7 @@ app.get("vendors", (req, res) => {
 app.post("vendors", (req, res) => {
   res.send(req.body);
 });
-app.use("/", routes);
+app.use("/", auth, routes);
 
 app.listen("4000 ", () => {
   console.log("app is running in port 4000");
